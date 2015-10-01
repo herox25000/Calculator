@@ -19,6 +19,8 @@ public class CalculatorInfo
 	}
 	
 	public CalculatorType type;
+	public int width;
+	public int height;
 	public int row;
 	public int col;
 	public HashMap<String, ButtonInfo> buttonMap;

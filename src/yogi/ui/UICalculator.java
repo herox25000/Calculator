@@ -30,7 +30,7 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 	private HashMap<UIButton, ButtonInfo> m_ButtonInfoMap;
 	private HashMap<Integer, UIButton> m_ButtonKeyMap;
 
-	public UICalculator(int width, int height)
+	public UICalculator(CalculatorType type)
 	{
 		m_Frame = new java.awt.Frame("Calculator");
 		m_Frame.setVisible(true);
@@ -44,7 +44,7 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 		
 		m_Display = new UIDisplay(m_DisplayPanel);
 		
-		m_CalculatorInfo = CalculatorData.GetInstance().query(CalculatorType.NORMAL);
+		m_CalculatorInfo = CalculatorData.GetInstance().query(type);
 		
 		m_ButtonInfoMap = new HashMap<UIButton, ButtonInfo>();
 		m_ButtonKeyMap = new HashMap<Integer, UIButton>();
@@ -77,7 +77,7 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 			}
 		}
 		
-		setSize(width, height);
+		setSize(m_CalculatorInfo.width, m_CalculatorInfo.height);
 	}
 
 	public void setSize(int width, int height)

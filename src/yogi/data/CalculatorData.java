@@ -71,6 +71,8 @@ public final class CalculatorData
 
 			CalculatorInfo calculatorInfo = new CalculatorInfo();
 			calculatorInfo.type = CalculatorType.values()[Integer.valueOf(calculatorElement.getAttribute("type"))];
+			calculatorInfo.width = Integer.valueOf(calculatorElement.getAttribute("width"));
+			calculatorInfo.height = Integer.valueOf(calculatorElement.getAttribute("height"));
 			calculatorInfo.row = Integer.valueOf(calculatorElement.getAttribute("row"));
 			calculatorInfo.col = Integer.valueOf(calculatorElement.getAttribute("col"));
 			

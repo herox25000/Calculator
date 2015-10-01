@@ -1,5 +1,5 @@
 <root>
-	<calculator type="0" row="5" col="4">
+	<calculator type="0" width="320" height="480" row="5" col="4">
 		<button label="AC" color="200,200,200" grids="0" keys=""/>
 		<button label="+/-" color="200,200,200" grids="1" keys=""/>
 		<button label="%" color="200,200,200" grids="2" keys="0"/>

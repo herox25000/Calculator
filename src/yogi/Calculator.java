@@ -1,5 +1,6 @@
 package yogi;
 
+import yogi.data.CalculatorInfo.CalculatorType;
 import yogi.ui.UICalculator;
 
 public final class Calculator
@@ -19,6 +20,6 @@ public final class Calculator
 	
 	private Calculator()
 	{
-		m_UICalculator = new UICalculator(320, 480);
+		m_UICalculator = new UICalculator(CalculatorType.NORMAL);
 	}
 }

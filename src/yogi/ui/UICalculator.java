@@ -104,9 +104,6 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 			
 			button.setBounds(rect.x, rect.y, rect.width, rect.height);
 		}
-		
-		m_DisplayPanel.repaint();
-		m_ButtonPanel.repaint();
 	}
 	
 	private Rectangle getBoundsInGrids(int w, int h, int col, int row, int[] grids)

@@ -3,11 +3,11 @@ package yogi.ui;
 import java.awt.Container;
 import java.awt.Label;
 
-public class UIDisplay
+public class UICalculatorScreen
 {
 	private Label m_Label;
 	
-	public UIDisplay(Container container)
+	public UICalculatorScreen(Container container)
 	{
 		m_Label = new java.awt.Label();
 		container.add(m_Label);

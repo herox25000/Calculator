@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import yogi.Calculator.OperaType;
 import yogi.data.CalculatorInfo.CalculatorType;
 
 public final class CalculatorData
@@ -19,7 +20,7 @@ public final class CalculatorData
 	public final String SPLIT = ",";
 	
 	private static CalculatorData s_Instance;
-	public static CalculatorData GetInstance()
+	public static CalculatorData getInstance()
 	{
 		if (null == s_Instance)
 		{
@@ -73,6 +74,7 @@ public final class CalculatorData
 			calculatorInfo.type = CalculatorType.values()[Integer.valueOf(calculatorElement.getAttribute("type"))];
 			calculatorInfo.width = Integer.valueOf(calculatorElement.getAttribute("width"));
 			calculatorInfo.height = Integer.valueOf(calculatorElement.getAttribute("height"));
+			calculatorInfo.screen = Float.valueOf(calculatorElement.getAttribute("screen"));
 			calculatorInfo.row = Integer.valueOf(calculatorElement.getAttribute("row"));
 			calculatorInfo.col = Integer.valueOf(calculatorElement.getAttribute("col"));
 			
@@ -84,8 +86,9 @@ public final class CalculatorData
 				Color color = parserColor(buttonElement.getAttribute("color"));
 				int[] grids = parserIntArray(buttonElement.getAttribute("grids"));
 				int[] keys = parserIntArray(buttonElement.getAttribute("keys"));
+				OperaType operaType = OperaType.values()[Integer.valueOf(buttonElement.getAttribute("operaType"))];
 				
-				calculatorInfo.AddButton(label, color, grids, keys);
+				calculatorInfo.AddButton(label, color, grids, keys, operaType);
 			}
 			
 			if (m_DataMap.containsKey(calculatorInfo.type))

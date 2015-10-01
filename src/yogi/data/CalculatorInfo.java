@@ -3,6 +3,8 @@ package yogi.data;
 import java.awt.Color;
 import java.util.HashMap;
 
+import yogi.Calculator.OperaType;
+
 public class CalculatorInfo
 {
 	public enum CalculatorType
@@ -16,11 +18,13 @@ public class CalculatorInfo
 		public Color color;
 		public int[] grids;
 		public int[] keys;
+		public OperaType operaType;
 	}
 	
 	public CalculatorType type;
 	public int width;
 	public int height;
+	public float screen;
 	public int row;
 	public int col;
 	public HashMap<String, ButtonInfo> buttonMap;
@@ -30,7 +34,11 @@ public class CalculatorInfo
 		buttonMap = new HashMap<String, ButtonInfo>();
 	}
 	
-	public void AddButton(String label, Color color, int[] grids, int[] keys)
+	public void AddButton(String label,
+			Color color,
+			int[] grids,
+			int[] keys,
+			OperaType operateType)
 	{
 		ButtonInfo buttonInfo;
 		if (buttonMap.containsKey(label))
@@ -47,5 +55,6 @@ public class CalculatorInfo
 		buttonInfo.color = color;
 		buttonInfo.grids = grids;
 		buttonInfo.keys = keys;
+		buttonInfo.operaType = operateType;
 	}
 }

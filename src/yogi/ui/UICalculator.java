@@ -7,28 +7,43 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import yogi.Calculator.OperaType;
 import yogi.data.CalculatorData;
 import yogi.data.CalculatorInfo;
 import yogi.data.CalculatorInfo.ButtonInfo;
 import yogi.data.CalculatorInfo.CalculatorType;
-import yogi.ui.UIButton.ButtonEvent;
-import yogi.ui.UIButton.ButtonListener;
+import yogi.ui.UICalculatorButton.ButtonEvent;
+import yogi.ui.UICalculatorButton.ButtonListener;
 
 public class UICalculator implements ComponentListener, KeyListener, ButtonListener
 {
-	private Frame m_Frame;
-	private Panel m_DisplayPanel;
-	private Panel m_ButtonPanel;
-	private UIDisplay m_Display;
-
+	public class OperaEvent
+	{
+		public OperaType operaType;
+		public String arg;
+	}
+	
+	public interface OperaListener extends EventListener
+	{
+		public void operaHandle(OperaEvent e);
+	}
+	
+	private OperaListener m_OperaListener;
+	
 	private CalculatorInfo m_CalculatorInfo;
 
-	private HashMap<UIButton, ButtonInfo> m_ButtonInfoMap;
-	private HashMap<Integer, UIButton> m_ButtonKeyMap;
+	private Frame m_Frame;
+	private Panel m_ScreenPanel;
+	private Panel m_ButtonPanel;
+	private UICalculatorScreen m_Screen;
+
+	private HashMap<UICalculatorButton, ButtonInfo> m_ButtonInfoMap;
+	private HashMap<Integer, UICalculatorButton> m_ButtonKeyMap;
 
 	public UICalculator(CalculatorType type)
 	{
@@ -36,26 +51,55 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 		m_Frame.setVisible(true);
 		m_Frame.addComponentListener(this);
 		
-		m_DisplayPanel = new java.awt.Panel();
-		m_Frame.add(m_DisplayPanel);
+		m_ScreenPanel = new java.awt.Panel();
+		m_Frame.add(m_ScreenPanel);
 		
 		m_ButtonPanel = new java.awt.Panel();
 		m_Frame.add(m_ButtonPanel);
 		
-		m_Display = new UIDisplay(m_DisplayPanel);
+		m_Screen = new UICalculatorScreen(m_ScreenPanel);
 		
-		m_CalculatorInfo = CalculatorData.GetInstance().query(type);
+		m_ButtonInfoMap = new HashMap<UICalculatorButton, ButtonInfo>();
+		m_ButtonKeyMap = new HashMap<Integer, UICalculatorButton>();
 		
-		m_ButtonInfoMap = new HashMap<UIButton, ButtonInfo>();
-		m_ButtonKeyMap = new HashMap<Integer, UIButton>();
+		setType(type);
+	}
+	
+	public void addOperaListener(OperaListener listener)
+	{
+		m_OperaListener = listener;
+	}
+	
+	public void setScreenText(String text)
+	{
+		m_Screen.setText(text);
+	}
+	
+	public String getScreenText()
+	{
+		return m_Screen.getText();
+	}
+	
+	public void setType(CalculatorType type)
+	{
+		if (null != m_CalculatorInfo && m_CalculatorInfo.type == type)
+		{
+			return;
+		}
 		
+		m_CalculatorInfo = CalculatorData.getInstance().query(type);
+		
+		m_ButtonPanel.removeAll();
+		m_ButtonInfoMap.clear();
+		m_ButtonKeyMap.clear();
+
 		Iterator<Entry<String, ButtonInfo>> iterator = m_CalculatorInfo.buttonMap.entrySet().iterator();
 		while (iterator.hasNext())
 		{
 			Entry<String, ButtonInfo> entry = iterator.next();
 			ButtonInfo buttonInfo = entry.getValue();
 			
-			UIButton button = new UIButton(m_ButtonPanel);
+			UICalculatorButton button = new UICalculatorButton(m_ButtonPanel);
 			button.setLabel(buttonInfo.label);
 			button.setColor(buttonInfo.color);
 			button.addKeyListener(this);
@@ -84,21 +128,21 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 	{
 		m_Frame.setSize(width, height);
 
-		m_DisplayPanel.setLocation(0, 0);
-		m_DisplayPanel.setSize(m_Frame.getWidth(), (int)(m_Frame.getHeight() * 0.2f));
+		m_ScreenPanel.setLocation(0, 0);
+		m_ScreenPanel.setSize(m_Frame.getWidth(), (int)(m_Frame.getHeight() * m_CalculatorInfo.screen));
 
-		m_ButtonPanel.setLocation(0, m_DisplayPanel.getHeight());
-		m_ButtonPanel.setSize(m_Frame.getWidth(), m_Frame.getHeight() - m_DisplayPanel.getHeight());
+		m_ButtonPanel.setLocation(0, m_ScreenPanel.getHeight());
+		m_ButtonPanel.setSize(m_Frame.getWidth(), m_Frame.getHeight() - m_ScreenPanel.getHeight());
 		
-		m_Display.setBounds(0, 0, m_Frame.getWidth(), m_Frame.getHeight() - m_ButtonPanel.getHeight());
+		m_Screen.setBounds(0, 0, m_Frame.getWidth(), m_Frame.getHeight() - m_ButtonPanel.getHeight());
 
 		int w = m_ButtonPanel.getWidth() / m_CalculatorInfo.col;
 		int h = m_ButtonPanel.getHeight() / m_CalculatorInfo.row;
-		Iterator<Entry<UIButton, ButtonInfo>> iterator = m_ButtonInfoMap.entrySet().iterator();
+		Iterator<Entry<UICalculatorButton, ButtonInfo>> iterator = m_ButtonInfoMap.entrySet().iterator();
 		while (iterator.hasNext())
 		{
-			Entry<UIButton, ButtonInfo> entry = iterator.next();
-			UIButton button = entry.getKey();
+			Entry<UICalculatorButton, ButtonInfo> entry = iterator.next();
+			UICalculatorButton button = entry.getKey();
 			ButtonInfo buttonInfo = entry.getValue();
 			Rectangle rect = getBoundsInGrids(w, h, m_CalculatorInfo.col, m_CalculatorInfo.row, buttonInfo.grids);
 			
@@ -169,15 +213,30 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 
 	public void keyPressed(KeyEvent e)
 	{
+		if(null == m_OperaListener)
+		{
+			return;
+		}
+		
 		int keyCode = e.getExtendedKeyCode();
 		if (!m_ButtonKeyMap.containsKey(keyCode))
 		{
 			return;
 		}
 		
-		UIButton button = m_ButtonKeyMap.get(keyCode);
+		UICalculatorButton button = m_ButtonKeyMap.get(keyCode);
+		if (!m_ButtonInfoMap.containsKey(button))
+		{
+			return;
+		}
 		
-		m_Display.setText(m_Display.getText() + button.getLabel());
+		ButtonInfo buttonInfo = m_ButtonInfoMap.get(button);
+		
+		OperaEvent operaEvent = new OperaEvent();
+		operaEvent.operaType = buttonInfo.operaType;
+		operaEvent.arg = buttonInfo.label;
+		
+		m_OperaListener.operaHandle(operaEvent);
 	}
 
 	public void keyReleased(KeyEvent e)
@@ -186,8 +245,23 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 
 	public void buttonPressed(ButtonEvent e)
 	{
-		UIButton button = e.button;
+		if(null == m_OperaListener)
+		{
+			return;
+		}
 		
-		m_Display.setText(m_Display.getText() + button.getLabel());
+		UICalculatorButton button = e.button;
+		if (!m_ButtonInfoMap.containsKey(button))
+		{
+			return;
+		}
+		
+		ButtonInfo buttonInfo = m_ButtonInfoMap.get(button);
+		
+		OperaEvent operaEvent = new OperaEvent();
+		operaEvent.operaType = buttonInfo.operaType;
+		operaEvent.arg = buttonInfo.label;
+		
+		m_OperaListener.operaHandle(operaEvent);
 	}
 }

@@ -8,11 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.util.EventListener;
 
-public class UIButton implements ActionListener
+public class UICalculatorButton implements ActionListener
 {
 	public class ButtonEvent
 	{
-		public UIButton button;
+		public UICalculatorButton button;
 	}
 	
 	public interface ButtonListener extends EventListener
@@ -23,7 +23,7 @@ public class UIButton implements ActionListener
 	private Button m_Button;
 	private ButtonListener m_Listener;
 	
-	public UIButton(Container container)
+	public UICalculatorButton(Container container)
 	{
 		m_Button = new java.awt.Button();
 		m_Button.addActionListener(this);

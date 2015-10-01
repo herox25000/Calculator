@@ -97,7 +97,7 @@ public final class Calculator implements OperaListener
 			break;
 		case OPP:
 			String text = m_UICalculator.getScreenText();
-			if (text.contains("-"))
+			if (text.charAt(0) == '-')
 			{
 				text = m_UICalculator.getScreenText().substring(1);
 			}

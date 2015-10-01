@@ -33,6 +33,7 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 	public UICalculator(int width, int height)
 	{
 		m_Frame = new java.awt.Frame("Calculator");
+		m_Frame.setVisible(true);
 		m_Frame.addComponentListener(this);
 		
 		m_DisplayPanel = new java.awt.Panel();
@@ -82,7 +83,6 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 	public void setSize(int width, int height)
 	{
 		m_Frame.setSize(width, height);
-		m_Frame.setVisible(true);
 
 		m_DisplayPanel.setLocation(0, 0);
 		m_DisplayPanel.setSize(m_Frame.getWidth(), (int)(m_Frame.getHeight() * 0.2f));
@@ -104,6 +104,9 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 			
 			button.setBounds(rect.x, rect.y, rect.width, rect.height);
 		}
+		
+		m_DisplayPanel.repaint();
+		m_ButtonPanel.repaint();
 	}
 	
 	private Rectangle getBoundsInGrids(int w, int h, int col, int row, int[] grids)

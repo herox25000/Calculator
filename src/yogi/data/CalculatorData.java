@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.io.File;
 import java.util.HashMap;
 
-import javax.print.attribute.ResolutionSyntax;
-import javax.print.attribute.standard.RequestingUserName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -83,7 +81,7 @@ public final class CalculatorData
 				String label = buttonElement.getAttribute("label");
 				Color color = parserColor(buttonElement.getAttribute("color"));
 				int[] grids = parserIntArray(buttonElement.getAttribute("grids"));
-				char[] keys = buttonElement.getAttribute("keys").toCharArray();
+				int[] keys = parserIntArray(buttonElement.getAttribute("keys"));
 				
 				calculatorInfo.AddButton(label, color, grids, keys);
 			}
@@ -99,6 +97,11 @@ public final class CalculatorData
 	
 	private int[] parserIntArray(String value)
 	{
+		if (value.isEmpty())
+		{
+			return new int[0];
+		}
+		
 		String[] splits = value.split(SPLIT);
 		int[] array = new int[splits.length];
 		for (int i = array.length; --i >= 0; )
@@ -111,6 +114,11 @@ public final class CalculatorData
 	
 	private Color parserColor(String value)
 	{
+		if (value.isEmpty())
+		{
+			return Color.white;
+		}
+		
 		String[] splits = value.split(SPLIT);
 		if (splits.length != 3)
 		{

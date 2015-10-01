@@ -28,7 +28,7 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 	private CalculatorInfo m_CalculatorInfo;
 
 	private HashMap<UIButton, ButtonInfo> m_ButtonInfoMap;
-	private HashMap<Character, UIButton> m_ButtonKeyMap;
+	private HashMap<Integer, UIButton> m_ButtonKeyMap;
 
 	public UICalculator(int width, int height)
 	{
@@ -46,7 +46,7 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 		m_CalculatorInfo = CalculatorData.GetInstance().query(CalculatorType.NORMAL);
 		
 		m_ButtonInfoMap = new HashMap<UIButton, ButtonInfo>();
-		m_ButtonKeyMap = new HashMap<Character, UIButton>();
+		m_ButtonKeyMap = new HashMap<Integer, UIButton>();
 		
 		Iterator<Entry<String, ButtonInfo>> iterator = m_CalculatorInfo.buttonMap.entrySet().iterator();
 		while (iterator.hasNext())
@@ -61,10 +61,10 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 			button.addButtonListener(this);
 			
 			m_ButtonInfoMap.put(button, buttonInfo);
-			
+
 			for (int i = buttonInfo.keys.length; --i >= 0; )
 			{
-				char key = buttonInfo.keys[i];
+				int key = buttonInfo.keys[i];
 				if (m_ButtonKeyMap.containsKey(key))
 				{
 					m_ButtonKeyMap.replace(key, button);
@@ -169,14 +169,13 @@ public class UICalculator implements ComponentListener, KeyListener, ButtonListe
 
 	public void keyPressed(KeyEvent e)
 	{
-		String key = String.valueOf(e.getKeyChar());
-		key = key.equals("\n") ? "Enter" : key;
-		if (!m_ButtonKeyMap.containsKey(key))
+		int keyCode = e.getExtendedKeyCode();
+		if (!m_ButtonKeyMap.containsKey(keyCode))
 		{
 			return;
 		}
 		
-		UIButton button = m_ButtonKeyMap.get(key);
+		UIButton button = m_ButtonKeyMap.get(keyCode);
 		
 		m_Display.setText(m_Display.getText() + button.getLabel());
 	}

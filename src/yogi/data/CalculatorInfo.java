@@ -15,7 +15,7 @@ public class CalculatorInfo
 		public String label;
 		public Color color;
 		public int[] grids;
-		public char[] keys;
+		public int[] keys;
 	}
 	
 	public CalculatorType type;
@@ -28,7 +28,7 @@ public class CalculatorInfo
 		buttonMap = new HashMap<String, ButtonInfo>();
 	}
 	
-	public void AddButton(String label, Color color, int[] grids, char[] keys)
+	public void AddButton(String label, Color color, int[] grids, int[] keys)
 	{
 		ButtonInfo buttonInfo;
 		if (buttonMap.containsKey(label))
